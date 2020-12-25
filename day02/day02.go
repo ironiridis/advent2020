@@ -9,9 +9,8 @@ import (
 	"github.com/ironiridis/advent2020/scando"
 )
 
-var infmt *regexp.Regexp = regexp.MustCompile(`^(?P<minimum>[0-9]+)-(?P<maximum>[0-9]+) (?P<symbol>.): (?P<subject>.+)$`)
-
 func countValidPasswords(in chan string) (string, error) {
+	infmt := regexp.MustCompile(`^(?P<minimum>[0-9]+)-(?P<maximum>[0-9]+) (?P<symbol>.): (?P<subject>.+)$`)
 	valid := 0
 	for s := range in {
 		parse := infmt.FindStringSubmatch(s)
@@ -29,6 +28,7 @@ func countValidPasswords(in chan string) (string, error) {
 }
 
 func alternateCountValidPasswords(in chan string) (string, error) {
+	infmt := regexp.MustCompile(`^(?P<pos1>[0-9]+)-(?P<pos2>[0-9]+) (?P<symbol>.): (?P<subject>.+)$`)
 	valid := 0
 	for s := range in {
 		parse := infmt.FindStringSubmatch(s)
