@@ -29,7 +29,7 @@ func countValidPasswords(in chan string) (string, error) {
 }
 
 func main() {
-	fmt.Println("Day 2, part 1 - expense report values, pairs summing to 2020")
+	fmt.Println("Day 2, part 1 - password validity, symbol count ranges")
 	ans, err := countValidPasswords(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
