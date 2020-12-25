@@ -28,6 +28,17 @@ func countValidPasswords(in chan string) (string, error) {
 	return strconv.Itoa(valid), nil
 }
 
+func alternateCountValidPasswords(in chan string) (string, error) {
+	valid := 0
+	for s := range in {
+		parse := infmt.FindStringSubmatch(s)
+		if parse == nil {
+			return "", fmt.Errorf("unable to parse line %q with %q", s, infmt)
+		}
+	}
+	return strconv.Itoa(valid), nil
+}
+
 func main() {
 	fmt.Println("Day 2, part 1 - password validity, symbol count ranges")
 	ans, err := countValidPasswords(scando.Input())
@@ -36,4 +47,11 @@ func main() {
 		return
 	}
 	fmt.Printf("Part 1 Answer: %q\n", ans)
+	fmt.Println("Day 2, part 2 - password validity, mutually exclusive symbol positions")
+	ans, err := alternateCountValidPasswords(scando.Input())
+	if err != nil {
+		fmt.Printf("Cannot determine answer: %v\n", err)
+		return
+	}
+	fmt.Printf("Part 2 Answer: %q\n", ans)
 }
