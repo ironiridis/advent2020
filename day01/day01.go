@@ -23,6 +23,20 @@ func findTwoSumTo2020(in chan string) (string, error) {
 }
 
 func findThreeSumTo2020(in chan string) (string, error) {
+	m := make(map[int]bool)
+	for s := range in {
+		v1, err := strconv.Atoi(s)
+		if err != nil {
+			return "", fmt.Errorf("Converting v1: %w", err)
+		}
+		v2 := 2020 - v1
+		for j := range m {
+			if m[v2-j] {
+				return strconv.Itoa(v1 * j * (v2 - j)), nil
+			}
+		}
+		m[v1] = true
+	}
 	return "", fmt.Errorf("unimplemented 😬")
 }
 
