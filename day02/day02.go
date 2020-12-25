@@ -31,9 +31,14 @@ func alternateCountValidPasswords(in chan string) (string, error) {
 	infmt := regexp.MustCompile(`^(?P<pos1>[0-9]+)-(?P<pos2>[0-9]+) (?P<symbol>.): (?P<subject>.+)$`)
 	valid := 0
 	for s := range in {
-		parse := infmt.FindStringSubmatch(s)
+		parse := infmt.FindSubmatch([]byte(s))
 		if parse == nil {
 			return "", fmt.Errorf("unable to parse line %q with %q", s, infmt)
+		}
+		pos1, _ := strconv.Atoi(string(parse[1]))
+		pos2, _ := strconv.Atoi(string(parse[2]))
+		if (parse[4][pos1-1] == parse[3][0]) != (parse[4][pos2-1] == parse[3][0]) {
+			valid++
 		}
 	}
 	return strconv.Itoa(valid), nil
@@ -48,7 +53,7 @@ func main() {
 	}
 	fmt.Printf("Part 1 Answer: %q\n", ans)
 	fmt.Println("Day 2, part 2 - password validity, mutually exclusive symbol positions")
-	ans, err := alternateCountValidPasswords(scando.Input())
+	ans, err = alternateCountValidPasswords(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
 		return
