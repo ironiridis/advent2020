@@ -27,8 +27,8 @@ func findThreeSumTo2020(in chan string) (string, error) {
 }
 
 func part1() {
-	ans, err := findTwoSumTo2020(scando.Stdin())
 	fmt.Println("Day 1, part 1 - expense report values, pairs summing to 2020")
+	ans, err := findTwoSumTo2020(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
 		return
@@ -37,8 +37,8 @@ func part1() {
 }
 
 func part2() {
-	ans, err := findThreeSumTo2020(scando.Stdin())
 	fmt.Println("Day 1, part 2 - expense report values, triples summing to 2020")
+	ans, err := findThreeSumTo2020(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
 		return
