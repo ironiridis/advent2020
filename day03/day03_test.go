@@ -7,7 +7,7 @@ import (
 )
 
 func TestPart1Example(t *testing.T) {
-	scando.Strap(countTreeEncounters,
+	scando.Strap(countTreeEncountersPart1,
 		`..##.......
 		 #...#...#..
 		 .#....#..#.
@@ -22,5 +22,16 @@ func TestPart1Example(t *testing.T) {
 }
 
 func TestPart2Example(t *testing.T) {
-	t.Fail()
+	scando.Strap(countTreeEncountersPart2,
+		`..##.......
+		 #...#...#..
+		 .#....#..#.
+		 ..#.#...#.#
+		 .#...##..#.
+		 ..#.##.....
+		 .#.#.#....#
+		 .#........#
+		 #.##...#...
+		 #...##....#
+		 .#..#...#.#`, "336", t)
 }
