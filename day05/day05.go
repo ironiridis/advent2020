@@ -40,6 +40,29 @@ func getMaximumSeatID(in chan string) (string, error) {
 }
 
 func getMissingSeatID(in chan string) (string, error) {
+	var seats [1024]bool
+	for s := range in {
+		if s == "" { // ignore insignificant blank lines
+			continue
+		}
+		sid, err := seatId(s)
+		if err != nil {
+			return "", err
+		}
+		seats[sid] = true
+	}
+
+	for p := range seats {
+		if p == 0 {
+			continue
+		}
+		if p == len(seats)-1 {
+			break
+		}
+		if seats[p-1] && !seats[p] && seats[p+1] {
+			return strconv.Itoa(p), nil
+		}
+	}
 	return "", fmt.Errorf("did not find an unset seat id")
 }
 
