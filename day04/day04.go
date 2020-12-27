@@ -156,14 +156,14 @@ func countValidPassportsPart2(in chan string) (string, error) {
 }
 
 func main() {
-	fmt.Println("Day 3, part 1 - valid passport count, just checking field presence")
+	fmt.Println("Day 4, part 1 - valid passport count, just checking field presence")
 	ans, err := countValidPassportsPart1(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
 		return
 	}
 	fmt.Printf("Part 1 Answer: %q\n", ans)
-	fmt.Println("Day 3, part 2 - valid passport count, with value validation")
+	fmt.Println("Day 4, part 2 - valid passport count, with value validation")
 	ans, err = countValidPassportsPart2(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
