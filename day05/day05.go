@@ -7,22 +7,30 @@ import (
 	"github.com/ironiridis/advent2020/scando"
 )
 
+func seatId(s string) (int, error) {
+	if len(s) != 10 {
+		return 0, fmt.Errorf("input %q is not 10 characters", s)
+	}
+	pval := 512
+	sid := 0
+	for _, c := range s {
+		if c == 'B' || c == 'R' {
+			sid += pval
+		}
+		pval = pval >> 1
+	}
+	return sid, nil
+}
+
 func getMaximumSeatID(in chan string) (string, error) {
 	var max int
 	for s := range in {
 		if s == "" { // ignore insignificant blank lines
 			continue
 		}
-		if len(s) != 10 {
-			return "", fmt.Errorf("input %q is not 10 bytes", s)
-		}
-		pval := 512
-		sid := 0
-		for _, c := range s {
-			if c == 'B' || c == 'R' {
-				sid += pval
-			}
-			pval = pval >> 1
+		sid, err := seatId(s)
+		if err != nil {
+			return "", err
 		}
 		if sid > max {
 			max = sid
