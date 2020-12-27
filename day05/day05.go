@@ -39,6 +39,10 @@ func getMaximumSeatID(in chan string) (string, error) {
 	return strconv.Itoa(max), nil
 }
 
+func getMissingSeatID(in chan string) (string, error) {
+	return "", fmt.Errorf("did not find an unset seat id")
+}
+
 func main() {
 	fmt.Println("Day 5, part 1 - highest seat id")
 	ans, err := getMaximumSeatID(scando.Input())
@@ -47,13 +51,11 @@ func main() {
 		return
 	}
 	fmt.Printf("Part 1 Answer: %q\n", ans)
-	/*
-		fmt.Println("Day 5, part 2 ...")
-		ans, err = getMaximumSeatID(scando.Input())
-		if err != nil {
-			fmt.Printf("Cannot determine answer: %v\n", err)
-			return
-		}
-		fmt.Printf("Part 2 Answer: %q\n", ans)
-	*/
+	fmt.Println("Day 5, part 2 - missing seat id")
+	ans, err = getMissingSeatID(scando.Input())
+	if err != nil {
+		fmt.Printf("Cannot determine answer: %v\n", err)
+		return
+	}
+	fmt.Printf("Part 2 Answer: %q\n", ans)
 }

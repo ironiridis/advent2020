@@ -22,5 +22,8 @@ func TestPart1Example(t *testing.T) {
 }
 
 func TestPart2Example(t *testing.T) {
-	t.Fail()
+	scando.Strap(getMaximumSeatID,
+		`FFFFFFFLRL
+		FFFFFFFRLL
+		`, "4", t)
 }
