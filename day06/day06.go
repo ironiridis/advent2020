@@ -9,7 +9,7 @@ import (
 
 type answers map[rune]int
 
-func readGroup(in chan string) (a answers, done bool, err error) {
+func readGroup(in chan string) (a answers, folks int, done bool, err error) {
 	a = make(answers, 0)
 	for {
 		s, ok := <-in
@@ -19,6 +19,7 @@ func readGroup(in chan string) (a answers, done bool, err error) {
 		if s == "" {
 			return
 		}
+		folks++
 		for _, sym := range s {
 			a[sym]++
 		}
@@ -28,7 +29,7 @@ func readGroup(in chan string) (a answers, done bool, err error) {
 func part1func(in chan string) (string, error) {
 	var total int
 	for {
-		a, done, err := readGroup(in)
+		a, _, done, err := readGroup(in)
 		if err != nil {
 			return "", err
 		}
