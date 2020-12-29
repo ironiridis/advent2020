@@ -79,14 +79,14 @@ func part2func(in chan string) (string, error) {
 }
 
 func main() {
-	fmt.Println("Day 7, part 1 - summary")
+	fmt.Println("Day 7, part 1 - number of bags that can contain a shiny gold bag")
 	ans, err := part1func(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
 		return
 	}
 	fmt.Printf("Part 1 Answer: %q\n", ans)
-	fmt.Println("Day 7, part 2 - summary")
+	fmt.Println("Day 7, part 2 - number of bags that must be contained in a shiny gold bag")
 	ans, err = part2func(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
