@@ -25,5 +25,19 @@ func TestPart1Example(t *testing.T) {
 }
 
 func TestPart2Example(t *testing.T) {
-	t.Fail()
+	scando.Strap(part2func, `abc
+
+	a
+	b
+	c
+	
+	ab
+	ac
+	
+	a
+	a
+	a
+	a
+	
+	b`, "6", t)
 }
