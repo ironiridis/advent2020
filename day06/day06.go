@@ -42,7 +42,22 @@ func part1func(in chan string) (string, error) {
 }
 
 func part2func(in chan string) (string, error) {
-	return "", fmt.Errorf("unimplemented")
+	var total int
+	for {
+		a, folks, done, err := readGroup(in)
+		if err != nil {
+			return "", err
+		}
+		for sym := range a {
+			if a[sym] == folks {
+				total++
+			}
+		}
+		if done {
+			break
+		}
+	}
+	return strconv.Itoa(total), nil
 }
 
 func main() {
@@ -53,7 +68,7 @@ func main() {
 		return
 	}
 	fmt.Printf("Part 1 Answer: %q\n", ans)
-	fmt.Println("Day 6, part 2 - summary")
+	fmt.Println("Day 6, part 2 - sum of unanimous affirmative answers")
 	ans, err = part2func(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
