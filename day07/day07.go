@@ -57,6 +57,21 @@ func (r rules) deleteBag(b string) {
 	}
 }
 
+func (r rules) reqWalk(b string) (int, error) {
+	if r[b] == nil {
+		return 0, fmt.Errorf("cannot find rule for %q", b)
+	}
+	t := 1
+	for inner := range r[b] {
+		val, err := r.reqWalk(inner)
+		if err != nil {
+			return 0, fmt.Errorf("in r[%q]: %w", b, err)
+		}
+		t += val * r[b][inner]
+	}
+	return t, nil
+}
+
 func part1func(in chan string) (string, error) {
 	r := make(rules)
 	err := r.parseAll(in)
@@ -75,7 +90,16 @@ func part1func(in chan string) (string, error) {
 }
 
 func part2func(in chan string) (string, error) {
-	return "", fmt.Errorf("unimplemented")
+	r := make(rules)
+	err := r.parseAll(in)
+	if err != nil {
+		return "", err
+	}
+	total, err := r.reqWalk("shiny gold")
+	if err != nil {
+		return "", err
+	}
+	return strconv.Itoa(total - 1), nil
 }
 
 func main() {
