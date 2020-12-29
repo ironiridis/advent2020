@@ -97,6 +97,12 @@ func makeFolder(f string, d int) (err error) {
 		return
 	}
 
+	inputfp, err := os.Create(fmt.Sprintf("%s/input.txt", f))
+	if err != nil {
+		return
+	}
+	defer inputfp.Close()
+
 	return
 }
 
