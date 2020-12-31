@@ -64,6 +64,25 @@ func (ps *programState) eval() (int, error) {
 	return ps.acc, nil
 }
 
+func (ps *programState) run() (int, error) {
+	steps := len(ps.instructions)
+	ps.pc = 0
+	ps.acc = 0
+	for steps > 0 {
+		acc, err := ps.eval()
+		if err != nil {
+			return 0, err
+		}
+		if ps.pc == len(ps.instructions) {
+			// this is defined as the natural termination condition,
+			// having the pc point one instruction beyond the end
+			return acc, nil
+		}
+		steps--
+	}
+	return 0, fmt.Errorf("program appears to loop infinitely")
+}
+
 func part1func(in chan string) (string, error) {
 	ps, err := newProgramState(in)
 	if err != nil {
@@ -88,7 +107,30 @@ func part1func(in chan string) (string, error) {
 }
 
 func part2func(in chan string) (string, error) {
-	return "", fmt.Errorf("unimplemented")
+	ps, err := newProgramState(in)
+	if err != nil {
+		return "", err
+	}
+	for j := len(ps.instructions) - 1; j >= 0; j-- {
+		if ps.instructions[j] == nil {
+			return "", fmt.Errorf("tried to mutate instruction %d but it's nil", j)
+		}
+		osym := ps.instructions[j].sym
+		switch osym {
+		case "nop":
+			ps.instructions[j].sym = "jmp"
+		case "jmp":
+			ps.instructions[j].sym = "nop"
+		default:
+			continue
+		}
+		acc, err := ps.run()
+		if err == nil {
+			return strconv.Itoa(acc), nil
+		}
+		ps.instructions[j].sym = osym
+	}
+	return "", fmt.Errorf("could not find a mutation that satisfied the problem")
 }
 
 func main() {
@@ -99,7 +141,7 @@ func main() {
 		return
 	}
 	fmt.Printf("Part 1 Answer: %q\n", ans)
-	fmt.Println("Day 8, part 2 - summary")
+	fmt.Println("Day 8, part 2 - accumulator after mutate to fix")
 	ans, err = part2func(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)

@@ -19,5 +19,13 @@ func TestPart1Example(t *testing.T) {
 }
 
 func TestPart2Example(t *testing.T) {
-	t.Fail()
+	scando.Strap(part2func, `nop +0
+	acc +1
+	jmp +4
+	acc +3
+	jmp -3
+	acc -99
+	acc +1
+	jmp -4
+	acc +6`, "8", t)
 }
