@@ -25,6 +25,30 @@ func isSumOfTwoOf(v int64, r []int64) bool {
 	return false
 }
 
+func isSumOfRange(v int64, r []int64) (isSum bool, min int64, max int64) {
+	min, max = r[0], r[0]
+	var sum int64
+	for j := range r {
+		sum += r[j]
+		if r[j] < min {
+			min = r[j]
+		}
+		if r[j] > max {
+			max = r[j]
+		}
+		if sum < v {
+			continue
+		}
+		if sum == v {
+			isSum = true
+			return
+		}
+		// sum is too high, abort early
+		break
+	}
+	return
+}
+
 func findBadNumber(in chan string, n int) (int64, []int64, error) {
 	var list []int64
 	for s := range in {
@@ -51,7 +75,16 @@ func part1func(in chan string, n int) (string, error) {
 }
 
 func part2func(in chan string, n int) (string, error) {
-	return "", fmt.Errorf("unimplemented")
+	target, list, err := findBadNumber(in, n)
+	if err != nil {
+		return "", err
+	}
+	for j := range list {
+		if isSum, min, max := isSumOfRange(target, list[j:]); isSum {
+			return strconv.FormatInt(min+max, 10), nil
+		}
+	}
+	return "", fmt.Errorf("could not find candidate")
 }
 
 func main() {
