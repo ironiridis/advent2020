@@ -48,8 +48,32 @@ func part1func(in chan string) (string, error) {
 	return strconv.Itoa(diff1 * diff3), nil
 }
 
+func part2calc(list []int) int64 {
+	if len(list) == 1 {
+		return 1
+	}
+	var res int64
+	for j := range list {
+		if j == 0 {
+			continue
+		}
+		if list[j]-list[0] <= 3 {
+			res += part2calc(list[j:])
+		} else {
+			break
+		}
+	}
+	return res
+}
+
 func part2func(in chan string) (string, error) {
-	return "", fmt.Errorf("unimplemented")
+	adapters, err := getlist(in)
+	if err != nil {
+		return "", fmt.Errorf("cannot get list: %w", err)
+	}
+
+	combinations := part2calc(adapters)
+	return strconv.FormatInt(combinations, 10), nil
 }
 
 func main() {
