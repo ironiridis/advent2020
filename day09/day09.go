@@ -2,12 +2,47 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/ironiridis/advent2020/scando"
 )
 
+func isSumOfTwoOf(v int64, r []int64) bool {
+	// this is a very bad implementation; at a minimum we should only scan k
+	// starting at j+1, but the sets for these are always going to be very
+	// small (sets of 25 -> 600 comparisons) so i'll keep it simple/obvious
+	// if the sets were large, this would be worth revisiting
+	for j := range r {
+		for k := range r {
+			if j == k {
+				continue
+			}
+			if r[j]+r[k] == v {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func part1func(in chan string, n int) (string, error) {
-	return "", fmt.Errorf("unimplemented")
+	var list []int64
+	for s := range in {
+		v, err := strconv.ParseInt(s, 10, 64)
+		if err != nil {
+			return "", fmt.Errorf("cannot parse %q as int64: %w", s, err)
+		}
+		list = append(list, v)
+		// preamble phase
+		if len(list) <= n {
+			continue
+		}
+		// go's slice index calculation makes me double-take every single time
+		if !isSumOfTwoOf(v, list[(len(list)-n)-1:len(list)-1]) {
+			return strconv.FormatInt(v, 10), nil
+		}
+	}
+	return "", fmt.Errorf("did not find candidate value")
 }
 
 func part2func(in chan string, n int) (string, error) {
@@ -15,7 +50,7 @@ func part2func(in chan string, n int) (string, error) {
 }
 
 func main() {
-	fmt.Println("Day 9, part 1 - summary")
+	fmt.Println("Day 9, part 1 - member number not a sum of prior distinct two n")
 	ans, err := part1func(scando.Input(), 25)
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
