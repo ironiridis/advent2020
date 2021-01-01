@@ -8,7 +8,7 @@ import (
 	"github.com/ironiridis/advent2020/scando"
 )
 
-func part1func(in chan string) (string, error) {
+func getlist(in chan string) ([]int, error) {
 	adapters := []int{0} // implicit zeroth "joltage"
 	for s := range in {
 		if s == "" {
@@ -16,14 +16,21 @@ func part1func(in chan string) (string, error) {
 		}
 		v, err := strconv.Atoi(s)
 		if err != nil {
-			return "", fmt.Errorf("cannot convert %q to int: %w", s, err)
+			return nil, fmt.Errorf("cannot convert %q to int: %w", s, err)
 		}
 		adapters = append(adapters, v)
 	}
 	sort.Ints(adapters)
+	adapters = append(adapters, adapters[len(adapters)-1]+3)
+	return adapters, nil
+}
 
+func part1func(in chan string) (string, error) {
+	adapters, err := getlist(in)
+	if err != nil {
+		return "", fmt.Errorf("cannot get list: %w", err)
+	}
 	var diff1, diff3 int
-	diff3++ // account for computer adapter, not in input list
 
 	for j := range adapters {
 		if j == len(adapters)-1 {
