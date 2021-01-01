@@ -25,12 +25,12 @@ func isSumOfTwoOf(v int64, r []int64) bool {
 	return false
 }
 
-func part1func(in chan string, n int) (string, error) {
+func findBadNumber(in chan string, n int) (int64, []int64, error) {
 	var list []int64
 	for s := range in {
 		v, err := strconv.ParseInt(s, 10, 64)
 		if err != nil {
-			return "", fmt.Errorf("cannot parse %q as int64: %w", s, err)
+			return 0, nil, fmt.Errorf("cannot parse %q as int64: %w", s, err)
 		}
 		list = append(list, v)
 		// preamble phase
@@ -39,10 +39,15 @@ func part1func(in chan string, n int) (string, error) {
 		}
 		// go's slice index calculation makes me double-take every single time
 		if !isSumOfTwoOf(v, list[(len(list)-n)-1:len(list)-1]) {
-			return strconv.FormatInt(v, 10), nil
+			return v, list, nil
 		}
 	}
-	return "", fmt.Errorf("did not find candidate value")
+	return 0, list, fmt.Errorf("did not find candidate value")
+}
+
+func part1func(in chan string, n int) (string, error) {
+	v, _, err := findBadNumber(in, n)
+	return strconv.FormatInt(v, 10), err
 }
 
 func part2func(in chan string, n int) (string, error) {
