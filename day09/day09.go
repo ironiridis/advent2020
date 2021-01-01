@@ -95,7 +95,7 @@ func main() {
 		return
 	}
 	fmt.Printf("Part 1 Answer: %q\n", ans)
-	fmt.Println("Day 9, part 2 - summary")
+	fmt.Println("Day 9, part 2 - sum of min and max of range of numbers summing to abberant number")
 	ans, err = part2func(scando.Input(), 25)
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
