@@ -112,7 +112,7 @@ func main() {
 		return
 	}
 	fmt.Printf("Part 1 Answer: %q\n", ans)
-	fmt.Println("Day 12, part 2 - summary")
+	fmt.Println("Day 12, part 2 - manhattan distance after waypoint movement")
 	ans, err = part2func(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
