@@ -39,6 +39,50 @@ func (sm seatMap) at(r, c int) seat {
 	return sm[r][c]
 }
 
+func (sm seatMap) ray(r, c, rd, cd int) seat {
+	if rd == 0 && cd == 0 {
+		return sm.at(r, c)
+	}
+	for {
+		r += rd
+		c += cd
+		s := sm.at(r, c)
+		if s != Floor {
+			return s
+		}
+	}
+}
+
+func (sm seatMap) occupiedVisible(r, c int) (o int) {
+	if sm.ray(r, c, -1, -1) == Occupied {
+		o++
+	}
+	if sm.ray(r, c, -1, 0) == Occupied {
+		o++
+	}
+	if sm.ray(r, c, -1, 1) == Occupied {
+		o++
+	}
+
+	if sm.ray(r, c, 0, -1) == Occupied {
+		o++
+	}
+	if sm.ray(r, c, 0, 1) == Occupied {
+		o++
+	}
+
+	if sm.ray(r, c, 1, -1) == Occupied {
+		o++
+	}
+	if sm.ray(r, c, 1, 0) == Occupied {
+		o++
+	}
+	if sm.ray(r, c, 1, 1) == Occupied {
+		o++
+	}
+	return
+}
+
 func (sm seatMap) occupiedAround(r, c int) (o int) {
 	if sm.at(r-1, c-1) == Occupied {
 		o++
@@ -88,6 +132,25 @@ func (sm seatMap) getPart1Updates() []mapUpdate {
 	return u
 }
 
+func (sm seatMap) getPart2Updates() []mapUpdate {
+	var u []mapUpdate
+	for r := range sm {
+		for c := range sm[r] {
+			switch sm.at(r, c) {
+			case Occupied:
+				if sm.occupiedVisible(r, c) >= 5 {
+					u = append(u, mapUpdate{row: r, col: c, set: Empty})
+				}
+			case Empty:
+				if sm.occupiedVisible(r, c) == 0 {
+					u = append(u, mapUpdate{row: r, col: c, set: Occupied})
+				}
+			}
+		}
+	}
+	return u
+}
+
 func (sm seatMap) applyUpdates(u []mapUpdate) {
 	for idx := range u {
 		sm[u[idx].row][u[idx].col] = u[idx].set
@@ -120,7 +183,16 @@ func part1func(in chan string) (string, error) {
 }
 
 func part2func(in chan string) (string, error) {
-	return "", fmt.Errorf("unimplemented")
+	sm := newSeatMap(in)
+	for {
+		upd := sm.getPart2Updates()
+		if upd == nil {
+			break
+		}
+		sm.applyUpdates(upd)
+	}
+
+	return strconv.Itoa(sm.countOccupied()), nil
 }
 
 func main() {
