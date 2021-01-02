@@ -74,7 +74,7 @@ func (sm seatMap) occupiedAround(r, c int) (o int) {
 	return
 }
 
-func (sm seatMap) getUpdates() []mapUpdate {
+func (sm seatMap) getPart1Updates() []mapUpdate {
 	var u []mapUpdate
 	for r := range sm {
 		for c := range sm[r] {
@@ -114,7 +114,7 @@ func (sm seatMap) countOccupied() (o int) {
 func part1func(in chan string) (string, error) {
 	sm := newSeatMap(in)
 	for {
-		upd := sm.getUpdates()
+		upd := sm.getPart1Updates()
 		if upd == nil {
 			break
 		}
@@ -136,7 +136,7 @@ func main() {
 		return
 	}
 	fmt.Printf("Part 1 Answer: %q\n", ans)
-	fmt.Println("Day 11, part 2 - summary")
+	fmt.Println("Day 11, part 2 - occupied seats after settled, but more complicated")
 	ans, err = part2func(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
