@@ -24,7 +24,7 @@ type Position struct {
 	F    Facing
 }
 
-func (p *Position) eval(s string) error {
+func (p *Position) evalDirect(s string) error {
 	r := regexMovement.FindStringSubmatch(s)
 	if r == nil {
 		return fmt.Errorf("cannot parse %q with %q", s, r)
@@ -76,28 +76,30 @@ func (p *Position) eval(s string) error {
 	return nil
 }
 
+func manhattan(x, y int) (d int) {
+	if x < 0 {
+		d -= x
+	} else {
+		d += x
+	}
+	if y < 0 {
+		d -= y
+	} else {
+		d += y
+	}
+	return
+}
+
 func part1func(in chan string) (string, error) {
 	var err error
 	p := &Position{}
 	for s := range in {
-		err = p.eval(s)
+		err = p.evalDirect(s)
 		if err != nil {
 			return "", err
 		}
 	}
-	var d int
-	if p.X < 0 {
-		d -= p.X
-	} else {
-		d += p.X
-	}
-	if p.Y < 0 {
-		d -= p.Y
-	} else {
-		d += p.Y
-	}
-
-	return strconv.Itoa(d), nil
+	return strconv.Itoa(manhattan(p.X, p.Y)), nil
 }
 
 func part2func(in chan string) (string, error) {
@@ -105,7 +107,7 @@ func part2func(in chan string) (string, error) {
 }
 
 func main() {
-	fmt.Println("Day 12, part 1 - manhattan distance after movement")
+	fmt.Println("Day 12, part 1 - manhattan distance after direct movement")
 	ans, err := part1func(scando.Input())
 	if err != nil {
 		fmt.Printf("Cannot determine answer: %v\n", err)
