@@ -48,31 +48,58 @@ func part1func(in chan string) (string, error) {
 	return strconv.Itoa(diff1 * diff3), nil
 }
 
-func part2calc(list []int) int64 {
-	if len(list) == 1 {
-		return 1
-	}
-	var res int64
-	for j := range list {
-		if j == 0 {
+func part2walk(tree map[int][]int, tgt int) int64 {
+	for {
+		// 0 is the goal joltage; if we reach that, return 1
+		if tgt == 0 {
+			return 1
+		}
+		switch len(tree[tgt]) {
+		case 0:
+			// shouldn't be possible, but here for completeness
+			return 0
+		case 1:
+			// rather than recursing or creating new goroutines, just reuse this goroutine
+			tgt = tree[tgt][0]
 			continue
-		}
-		if list[j]-list[0] <= 3 {
-			res += part2calc(list[j:])
-		} else {
-			break
+		default:
+			// calculate depth first inline
+			res := part2walk(tree, tree[tgt][0])
+			gather := make(chan int64)
+			for _, next := range tree[tgt][1:] {
+				go func(next int, out chan int64) {
+					out <- part2walk(tree, next)
+				}(next, gather)
+			}
+			for n := len(tree[tgt]) - 1; n > 0; n-- {
+				res += <-gather
+			}
+			close(gather)
+			return res
 		}
 	}
-	return res
 }
 
 func part2func(in chan string) (string, error) {
-	adapters, err := getlist(in)
+	list, err := getlist(in)
 	if err != nil {
 		return "", fmt.Errorf("cannot get list: %w", err)
 	}
 
-	combinations := part2calc(adapters)
+	tree := make(map[int][]int, len(list))
+	for j := len(list) - 1; j >= 0; j-- {
+		tree[list[j]] = make([]int, 0, 3)
+		for v := range tree {
+			if v == j {
+				continue
+			}
+			if n := v - list[j]; n <= 3 && n >= 1 {
+				tree[v] = append(tree[v], list[j])
+			}
+		}
+	}
+
+	combinations := part2walk(tree, list[len(list)-1])
 	return strconv.FormatInt(combinations, 10), nil
 }
 
