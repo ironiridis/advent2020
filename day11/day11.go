@@ -2,12 +2,126 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/ironiridis/advent2020/scando"
 )
 
+type seat rune
+type seatMap [][]seat
+type mapUpdate struct {
+	row, col int
+	set      seat
+}
+
+const (
+	Occupied seat = '#'
+	Empty    seat = 'L'
+	Floor    seat = '.'
+)
+
+func newSeatMap(in chan string) seatMap {
+	var r seatMap
+	for s := range in {
+		if s == "" {
+			continue
+		}
+		r = append(r, []seat(s))
+	}
+	return r
+}
+
+func (sm seatMap) at(r, c int) seat {
+	if r < 0 || c < 0 {
+		return Floor
+	}
+	if r >= len(sm) {
+		return Floor
+	}
+	if c >= len(sm[r]) {
+		return Floor
+	}
+	return sm[r][c]
+}
+
+func (sm seatMap) occupiedAround(r, c int) (o int) {
+	if sm.at(r-1, c-1) == Occupied {
+		o++
+	}
+	if sm.at(r-1, c) == Occupied {
+		o++
+	}
+	if sm.at(r-1, c+1) == Occupied {
+		o++
+	}
+
+	if sm.at(r, c-1) == Occupied {
+		o++
+	}
+	if sm.at(r, c+1) == Occupied {
+		o++
+	}
+
+	if sm.at(r+1, c-1) == Occupied {
+		o++
+	}
+	if sm.at(r+1, c) == Occupied {
+		o++
+	}
+	if sm.at(r+1, c+1) == Occupied {
+		o++
+	}
+	return
+}
+
+func (sm seatMap) getUpdates() []mapUpdate {
+	var u []mapUpdate
+	for r := range sm {
+		for c := range sm[r] {
+			switch sm.at(r, c) {
+			case Occupied:
+				if sm.occupiedAround(r, c) >= 4 {
+					u = append(u, mapUpdate{row: r, col: c, set: Empty})
+				}
+			case Empty:
+				if sm.occupiedAround(r, c) == 0 {
+					u = append(u, mapUpdate{row: r, col: c, set: Occupied})
+				}
+			}
+		}
+	}
+	return u
+}
+
+func (sm seatMap) applyUpdates(u []mapUpdate) {
+	for idx := range u {
+		sm[u[idx].row][u[idx].col] = u[idx].set
+	}
+}
+
+func (sm seatMap) countOccupied() (o int) {
+	for r := range sm {
+		for c := range sm[r] {
+			if sm.at(r, c) == Occupied {
+				o++
+			}
+		}
+	}
+	return
+
+}
+
 func part1func(in chan string) (string, error) {
-	return "", fmt.Errorf("unimplemented")
+	sm := newSeatMap(in)
+	for {
+		upd := sm.getUpdates()
+		if upd == nil {
+			break
+		}
+		sm.applyUpdates(upd)
+	}
+
+	return strconv.Itoa(sm.countOccupied()), nil
 }
 
 func part2func(in chan string) (string, error) {
