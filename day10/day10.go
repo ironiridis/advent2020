@@ -113,12 +113,10 @@ func part2func(in chan string) (string, error) {
 			continue
 		}
 		if list[idx]-list[idx-1] == 3 {
-			//fmt.Printf("%d: cut %d-%d: %d\n", list, lastCut, idx, list[lastCut:idx+1])
 			trees = append(trees, treeFromList(list[lastCut:idx+1]))
 			lastCut = idx
 		}
 	}
-	//fmt.Printf("%#v\n", trees)
 	combinations := int64(1)
 	for idx := range trees {
 		r := part2walk(trees[idx], -1)
