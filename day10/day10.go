@@ -122,7 +122,6 @@ func part2func(in chan string) (string, error) {
 	combinations := int64(1)
 	for idx := range trees {
 		r := part2walk(trees[idx], -1)
-		fmt.Printf("trees[%d]=%#v; r=%d\n", idx, trees[idx], r)
 		combinations *= r
 	}
 	return strconv.FormatInt(combinations, 10), nil
