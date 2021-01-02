@@ -87,6 +87,52 @@ func (wp *Waypoint) RotateCCW() {
 	wp.X, wp.Y = wp.Y, 0-wp.X
 }
 
+func (p *Position) evalWithWaypoint(s string, wp *Waypoint) error {
+	r := regexMovement.FindStringSubmatch(s)
+	if r == nil {
+		return fmt.Errorf("cannot parse %q with %q", s, r)
+	}
+	i, err := strconv.Atoi(r[2])
+	if err != nil {
+		return fmt.Errorf("cannot parse integer part of %q: %w", s, err)
+	}
+	if i < 0 {
+		return fmt.Errorf("this code doesn't handle negative values correctly, so we cannot parse %q", s)
+	}
+	switch r[1] {
+	case "N":
+		wp.Y -= i
+	case "E":
+		wp.X += i
+	case "S":
+		wp.Y += i
+	case "W":
+		wp.X -= i
+	case "L":
+		if i%90 != 0 {
+			return fmt.Errorf("cannot parse %q with non-whole left rotation %d", s, i)
+		}
+		for i > 0 {
+			wp.RotateCCW()
+			i -= 90
+		}
+	case "R":
+		if i%90 != 0 {
+			return fmt.Errorf("cannot parse %q with non-whole right rotation %d", s, i)
+		}
+		for i > 0 {
+			wp.RotateCW()
+			i -= 90
+		}
+	case "F":
+		for ; i > 0; i-- {
+			p.X += wp.X
+			p.Y += wp.Y
+		}
+	}
+	return nil
+}
+
 func manhattan(x, y int) (d int) {
 	if x < 0 {
 		d -= x
@@ -114,7 +160,16 @@ func part1func(in chan string) (string, error) {
 }
 
 func part2func(in chan string) (string, error) {
-	return "", fmt.Errorf("unimplemented")
+	var err error
+	p := &Position{}
+	wp := &Waypoint{X: 10, Y: -1}
+	for s := range in {
+		err = p.evalWithWaypoint(s, wp)
+		if err != nil {
+			return "", err
+		}
+	}
+	return strconv.Itoa(manhattan(p.X, p.Y)), nil
 }
 
 func main() {
