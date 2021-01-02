@@ -8,7 +8,7 @@ import (
 	"github.com/ironiridis/advent2020/scando"
 )
 
-var regexMovement = regexp.MustCompile(`^(?P<direction>[A-Z])(?P<amount>[0-9]+)$`)
+var regexMovement = regexp.MustCompile(`^(?P<action>[A-Z])(?P<amount>[0-9]+)$`)
 
 type Facing int
 
@@ -22,6 +22,10 @@ const (
 type Position struct {
 	X, Y int
 	F    Facing
+}
+
+type Waypoint struct {
+	X, Y int
 }
 
 func (p *Position) evalDirect(s string) error {
@@ -74,6 +78,13 @@ func (p *Position) evalDirect(s string) error {
 		p.X -= i
 	}
 	return nil
+}
+
+func (wp *Waypoint) RotateCW() {
+	wp.X, wp.Y = 0-wp.Y, wp.X
+}
+func (wp *Waypoint) RotateCCW() {
+	wp.X, wp.Y = wp.Y, 0-wp.X
 }
 
 func manhattan(x, y int) (d int) {
