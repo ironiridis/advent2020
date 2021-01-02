@@ -48,16 +48,21 @@ func part1func(in chan string) (string, error) {
 	return strconv.Itoa(diff1 * diff3), nil
 }
 
-func part2walk(tree map[int][]int, tgt int) int64 {
-	for {
-		// 0 is the goal joltage; if we reach that, return 1
-		if tgt == 0 {
-			return 1
+type treeType map[int][]int
+
+func part2walk(tree treeType, tgt int) int64 {
+	if tgt == -1 {
+		for k := range tree {
+			if k > tgt {
+				tgt = k
+			}
 		}
+	}
+	for {
 		switch len(tree[tgt]) {
 		case 0:
-			// shouldn't be possible, but here for completeness
-			return 0
+			// we reached the root of this tree
+			return 1
 		case 1:
 			// rather than recursing or creating new goroutines, just reuse this goroutine
 			tgt = tree[tgt][0]
@@ -80,13 +85,8 @@ func part2walk(tree map[int][]int, tgt int) int64 {
 	}
 }
 
-func part2func(in chan string) (string, error) {
-	list, err := getlist(in)
-	if err != nil {
-		return "", fmt.Errorf("cannot get list: %w", err)
-	}
-
-	tree := make(map[int][]int, len(list))
+func treeFromList(list []int) treeType {
+	tree := make(treeType, len(list))
 	for j := len(list) - 1; j >= 0; j-- {
 		tree[list[j]] = make([]int, 0, 3)
 		for v := range tree {
@@ -98,8 +98,33 @@ func part2func(in chan string) (string, error) {
 			}
 		}
 	}
+	return tree
+}
 
-	combinations := part2walk(tree, list[len(list)-1])
+func part2func(in chan string) (string, error) {
+	list, err := getlist(in)
+	if err != nil {
+		return "", fmt.Errorf("cannot get list: %w", err)
+	}
+	var trees []treeType
+	var lastCut int
+	for idx := range list {
+		if idx == 0 {
+			continue
+		}
+		if list[idx]-list[idx-1] == 3 {
+			//fmt.Printf("%d: cut %d-%d: %d\n", list, lastCut, idx, list[lastCut:idx+1])
+			trees = append(trees, treeFromList(list[lastCut:idx+1]))
+			lastCut = idx
+		}
+	}
+	//fmt.Printf("%#v\n", trees)
+	combinations := int64(1)
+	for idx := range trees {
+		r := part2walk(trees[idx], -1)
+		fmt.Printf("trees[%d]=%#v; r=%d\n", idx, trees[idx], r)
+		combinations *= r
+	}
 	return strconv.FormatInt(combinations, 10), nil
 }
 
