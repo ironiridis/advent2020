@@ -18,6 +18,7 @@ const (
 	Occupied seat = '#'
 	Empty    seat = 'L'
 	Floor    seat = '.'
+	Wall     seat = '!'
 )
 
 func newSeatMap(in chan string) seatMap {
@@ -32,14 +33,8 @@ func newSeatMap(in chan string) seatMap {
 }
 
 func (sm seatMap) at(r, c int) seat {
-	if r < 0 || c < 0 {
-		return Floor
-	}
-	if r >= len(sm) {
-		return Floor
-	}
-	if c >= len(sm[r]) {
-		return Floor
+	if r < 0 || c < 0 || r >= len(sm) || c >= len(sm[r]) {
+		return Wall
 	}
 	return sm[r][c]
 }
